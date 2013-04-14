@@ -21,41 +21,30 @@ def clean(browser, list):
 	new = result.xpath("//table[@border=\"1\"]/tr")
 
 	# print type(new)
-	lstResults = []
-
+	newline = dict(
 	for each in new:
-		newline = dict(fundingNumber = "",
-				opportunityTitle = "",
-				Agency = "",
-				openDate = "",
-				attachment = "",
-				link = "")
 		try:
-			newline["fundingNumber"]=each[0].text
+			newline.append(each[0].text)
 			# newline.append(each[1].text)
 			links = each[1].iterlinks()
-			newline["opportunityTitle"] = each[1].text_content()
-			# newline.append(each[1].text_content())
-			# print links[0]
+			newline.append(each[1].text_content())
 			for eachlink in links:
-				newline["link"]=eachlink[2]
-			# newline.append(each[2].text)
-			newline["Agency"] = each[2].text
-			newline["openDate"] = each[3].text
-			newline["closeDate"] = each[4].text
-			# newline.append(each[3].text)
-			# newline["closeDate"]=each[3].text
-			# newline.append(each[4].text)
+				newline.append(eachlink[2])
+			newline.append(each[2].text)
+			newline.append(each[3].text)
+			newline.append(each[4].text)
 			links = each[5].iterlinks()
 			for attlink in links:
-				newline["attachment"] = attlink[2]
-				# newline.append(attlink[2])
-				# newline.append(each[5].text_content())
-				# pass
+				newline.append(attlink[2])
+				newline.append(each[5].text_content())
+				pass
 		except Exception:
 			pass
-		lstResults.append(newline.copy())
-	return lstResults
+	for each in newline:
+		try:
+			print each.strip()
+		except Exception:
+			pass
 
 
 
@@ -68,6 +57,7 @@ def clean(browser, list):
 	# boss = BeautifulSoup(browser.response().read())
 	# boss = BeautifulSoup(boss.decode('latin-1','ignore'))
 	# rows = boss.find("table", border=1, width="100%").find_all("tr")
+	return list
 
 	
 def scrape(keyword):
@@ -77,12 +67,12 @@ def scrape(keyword):
 	browser['text'] = keyword
 	browser.submit(id = 'submitsearch')
 	list = []
-	results = clean(browser, list)
+	rows = clean(browser, list)
 	# try:
 		# req = browser.click_link(text="Next")
 		# browser.open(req)
 		# rows = rows + clean(browser)
 	# except Exception:
 		# print 'done'
-	return results
+	print 'here'
 	# return rows

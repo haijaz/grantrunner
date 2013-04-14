@@ -9,17 +9,15 @@
 <table id="example" class="pretty">
 	<thead>
 		<tr>
-			<th><a href="#">agency</a></th>
-			<th><a href="#">title</a></th>
-			<th><a href="#">Number</a></th>
+			<th><aagency</th>
+			<th>title</th>
 		</tr>
 	</thead>
 	<tbody>
 	{% for word in results %}
 		<tr>
 			<td>{{ word.Agency }} </td>
-			<td><a href="{{word.link}}">{{word.opportunityTitle}}</a></td>
-			<td>{{word.fundingNumber}}</td>
+			<td>{{word.opportunityTitle}}</td>
 		</tr>
 	{% endfor %}
 	</tbody>

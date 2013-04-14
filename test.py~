@@ -1,0 +1,13 @@
+# from bs4 import BeautifulSoup
+import Scraper
+
+# keyword = 'cybersecurity'
+# results = Scraper.scrape(keyword)
+# for k in results:
+	# print k + '=' + results[k].strip()
+	
+	
+lst = []
+
+lst[0] = dict()
+last[0]["test"]

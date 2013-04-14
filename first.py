@@ -1,3 +1,5 @@
+import sys
+from bs4 import BeautifulSoup
 from flask import Flask, flash, url_for, render_template, request, redirect, session, escape
 from flask_sqlalchemy import SQLAlchemy
 from flask.ext.login import LoginManager, login_required, login_user, current_user, logout_user, UserMixin
@@ -64,9 +66,10 @@ class Results(db.Model):
 	Agency = db.Column(db.String(80))
 	openDate = db.Column(db.String(80))
 	attachment = db.Column(db.String(80))
+	link = db.Column(db.String(120))
 	created = db.Column(db.DateTime, default=datetime.datetime.now())
 	
-	def __init__(self, search_id, fundingNumber, opportunityTitle, Agency, openDate, CloseDate, attachment):
+	def __init__(self, search_id, fundingNumber, opportunityTitle, Agency, openDate, CloseDate, attachment, link):
 		self.search_id = search_id
 		self.fundingNumber = fundingNumber
 		self.opportunityTitle = opportunityTitle
@@ -74,6 +77,7 @@ class Results(db.Model):
 		self.openDate = openDate
 		self.CloseDate = CloseDate
 		self.attachment = attachment
+		self.link = link
 
 class Search(db.Model):
 	id = db.Column(db.Integer, primary_key=True)
@@ -148,10 +152,18 @@ def view():
 @app.route('/runit/<keyword>')
 @login_required
 def runit(keyword):
-	results = Scraper.scrape('cybersecurity')
+	results = Scraper.scrape(keyword)
+	f = open('results.html', 'w')
+	f.write(str(results))
+	f.close()
+	# print results
 	for rows in results:
 		try:
-			cells = rows.find_all("td")
+			if str(rows.a['href']):
+				s = "http://www.grants.gov"+str(rows.a['href']).strip()
+			else:
+				s = ''
+			cells = rows.find_all("td")			
 			new_result = Results(search_id = keyword,
 						fundingNumber = cells[0].text.strip(), 
 						opportunityTitle = cells[1].text.strip(),
@@ -159,11 +171,22 @@ def runit(keyword):
 						openDate = cells[3].text.strip(),
 						CloseDate = cells[4].text.strip(),
 						attachment = cells[5].text.strip(),
+						link = s
 						)
 			db.session.add(new_result)
 			db.session.commit()
 		except Exception:
-			print 'well sir, that did not work out well'
+			print 'goddamnit'
+			raise
+
+	# results = Scraper.scrape(keyword)
+	# for rows in results:
+		# try:
+			# cells = rows.find_all("td")
+
+			# print cells[1]
+		# except Exception:
+			# print 'well  well'
 	return redirect(url_for('index'))
 	
 @app.route('/signin/', methods=['GET', 'POST'])

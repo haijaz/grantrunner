@@ -152,26 +152,21 @@ def view():
 @app.route('/runit/<keyword>')
 @login_required
 def runit(keyword):
-	results = Scraper.scrape(keyword)
-	f = open('results.html', 'w')
-	f.write(str(results))
-	f.close()
+	me = getBySearchid(keyword)
+	print me.keyword
+	rawresults = Scraper.scrape(me.keyword)
+	results = [s for s in rawresults if s.keys()!=[]] 
 	# print results
 	for rows in results:
-		try:
-			if str(rows.a['href']):
-				s = "http://www.grants.gov"+str(rows.a['href']).strip()
-			else:
-				s = ''
-			cells = rows.find_all("td")			
+		try:		
 			new_result = Results(search_id = keyword,
-						fundingNumber = cells[0].text.strip(), 
-						opportunityTitle = cells[1].text.strip(),
-						Agency = cells[2].text.strip(),
-						openDate = cells[3].text.strip(),
-						CloseDate = cells[4].text.strip(),
-						attachment = cells[5].text.strip(),
-						link = s
+						fundingNumber = rows["fundingNumber"].strip(), 
+						opportunityTitle = rows["opportunityTitle"].strip(),
+						Agency = rows["Agency"].strip(),
+						openDate = rows["openDate"].strip(),
+						CloseDate = rows["closeDate"].strip(),
+						attachment = rows["attachment"].strip(),
+						link = "http://www.grants.gov/"+rows["link"].strip()
 						)
 			db.session.add(new_result)
 			db.session.commit()
@@ -187,7 +182,7 @@ def runit(keyword):
 			# print cells[1]
 		# except Exception:
 			# print 'well  well'
-	return redirect(url_for('index'))
+	return redirect(url_for('view'))
 	
 @app.route('/signin/', methods=['GET', 'POST'])
 def signin():

@@ -1,13 +1,17 @@
 # from bs4 import BeautifulSoup
-import Scraper
+from smtpd import SMTPServer
 
-# keyword = 'cybersecurity'
-# results = Scraper.scrape(keyword)
-# for k in results:
-	# print k + '=' + results[k].strip()
-	
-	
-lst = []
-
-lst[0] = dict()
-last[0]["test"]
+keyword = 'agriculture'
+results = Scraper.scrape(keyword)
+test = [s for s in results if s.keys()!=[]] 
+x=0
+for k in test:
+	# for cell in k:
+		# print cell + '=			' + k[cell].strip()
+	# print ""
+	print k['attachment']
+	# if k.keys()==[]:
+		# print x
+	x +=1
+	print x
+print x

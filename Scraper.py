@@ -21,15 +21,15 @@ def clean(browser, list):
 	new = result.xpath("//table[@border=\"1\"]/tr")
 
 	# print type(new)
-	lstResults = []
-
+	lstResults = list
 	for each in new:
-		newline = dict(fundingNumber = "",
-				opportunityTitle = "",
-				Agency = "",
-				openDate = "",
-				attachment = "",
-				link = "")
+		newline = dict()
+		# newline = dict(fundingNumber = "",
+				# opportunityTitle = "",
+				# Agency = "",
+				# openDate = "",
+				# attachment = "",
+				# link = "")
 		try:
 			newline["fundingNumber"]=each[0].text
 			# newline.append(each[1].text)
@@ -46,9 +46,10 @@ def clean(browser, list):
 			# newline.append(each[3].text)
 			# newline["closeDate"]=each[3].text
 			# newline.append(each[4].text)
-			links = each[5].iterlinks()
-			for attlink in links:
-				newline["attachment"] = attlink[2]
+			newline["attachment"] = ""
+			# links = each[5].iterlinks()
+			# for attlink in links:
+				# newline["attachment"] = attlink[2]
 				# newline.append(attlink[2])
 				# newline.append(each[5].text_content())
 				# pass
@@ -71,18 +72,20 @@ def clean(browser, list):
 
 	
 def scrape(keyword):
+	print keyword
 	browser = mechanize.Browser()
 	browser.open('http://www.grants.gov/search/advanced.do')
 	browser.select_form(name='searchForm')
 	browser['text'] = keyword
 	browser.submit(id = 'submitsearch')
-	list = []
-	results = clean(browser, list)
-	# try:
-		# req = browser.click_link(text="Next")
-		# browser.open(req)
-		# rows = rows + clean(browser)
-	# except Exception:
-		# print 'done'
-	return results
+	lstResults = []
+	lstResults = clean(browser, lstResults)
+	try:
+		while browser.find_link(text="Next"):
+			req = browser.click_link(text="Next")
+			browser.open(req)
+			lstResults = clean(browser, lstResults)
+	except Exception:
+		print 'done'
+	return lstResults
 	# return rows
